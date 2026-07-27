@@ -1,38 +1,46 @@
 import { DomainError } from "@/DomainError";
 
 export class PuzzleServices {
-  constructor(
-    private readonly targetWords: string[],
-    private usedWords: string[],
-    private target: string,
-  ) {}
+  constructor(private readonly targetWords: string[]) {}
 
-  setTargetWord() {
-    const unusedWords = this.targetWords.filter(
-      (word) => !this.usedWords.includes(word),
+  private getDayOfYear(date: Date): number {
+    return Math.floor(
+      (date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) /
+        86400000,
     );
-
-    const pool = unusedWords.length > 0 ? unusedWords : this.targetWords;
-
-    this.target = pool[Math.floor(Math.random() * pool.length)];
   }
 
-  private evaluateGuess(command: { guess: string }) {
-    const guess = command.guess.trim().toLowerCase();
+  getTargetWord(command: { seed?: string }) {
+    if (command.seed) {
+      const seed = command.seed.trim().toLowerCase();
 
-    if (!this.target) {
-      this.setTargetWord();
+      if (seed.length !== 5) {
+        throw new DomainError("INVALID_SEED_LENGTH");
+      }
+      if (!this.targetWords.includes(seed)) {
+        throw new DomainError("INVALID_SEED");
+      }
+      return seed;
     }
+
+    const dayOfYear = this.getDayOfYear(new Date());
+    const index = dayOfYear % this.targetWords.length;
+    return this.targetWords[index];
+  }
+
+  evaluateGuess(command: { guess: string; target: string }) {
+    const guess = command.guess.trim().toLowerCase();
+    const target = command.target.trim().toLowerCase();
 
     if (guess.length !== 5) {
       throw new DomainError("INVALID_WORD_LENGTH");
     }
-    if (!this.isValidWord(command)) {
+    if (!this.targetWords.includes(guess)) {
       throw new DomainError("INVALID_WORD");
     }
 
     const guessArray = guess.split("");
-    const targetArray = this.target.split("");
+    const targetArray = target.split("");
     const result: ("correct" | "present" | "absent")[] = new Array(
       guessArray.length,
     );
@@ -68,9 +76,5 @@ export class PuzzleServices {
     });
 
     return result;
-  }
-
-  private isValidWord(command: { guess: string }) {
-    return this.targetWords.includes(command.guess);
   }
 }

@@ -1,42 +1,17 @@
-import Tile, { TileStatus } from "@/components/Tile";
+import Tile from "@/components/Tile";
 import { Spacing } from "@/theme";
 import { StyleSheet, View } from "react-native";
 
-export interface GridRow {
-  letters: string[];
-  statuses: TileStatus[];
-}
+const ROW_COUNT = 6;
+const COLUMN_COUNT = 5;
 
-interface GridProps {
-  rows: GridRow[];
-  rowCount?: number;
-  columnCount?: number;
-}
-
-export default function Grid({
-  rows,
-  rowCount = 6,
-  columnCount = 5,
-}: GridProps) {
-  const paddedRows: GridRow[] = Array.from({ length: rowCount }, (_, i) => {
-    return (
-      rows[i] ?? {
-        letters: Array(columnCount).fill(""),
-        statuses: Array(columnCount).fill("empty"),
-      }
-    );
-  });
-
+export default function Grid() {
   return (
     <View style={styles.grid}>
-      {paddedRows.map((row, rowIndex) => (
+      {Array.from({ length: ROW_COUNT }, (_, rowIndex) => (
         <View key={rowIndex} style={styles.row}>
-          {Array.from({ length: columnCount }, (_, colIndex) => (
-            <Tile
-              key={colIndex}
-              letter={row.letters[colIndex]}
-              status={row.statuses[colIndex] ?? "empty"}
-            />
+          {Array.from({ length: COLUMN_COUNT }, (_, colIndex) => (
+            <Tile key={colIndex} status="unverified" />
           ))}
         </View>
       ))}

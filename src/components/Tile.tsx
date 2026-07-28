@@ -1,11 +1,10 @@
+import { LetterStatus } from "@/stores/useActiveGame";
 import { useTheme } from "@/theme";
 import { StyleSheet, Text, View } from "react-native";
 
-export type TileStatus = "empty" | "correct" | "present" | "absent";
-
 interface TileProps {
   letter?: string;
-  status: TileStatus;
+  status: LetterStatus;
 }
 
 export default function Tile({ letter, status }: TileProps) {
@@ -20,8 +19,9 @@ export default function Tile({ letter, status }: TileProps) {
           ? theme.tileAbsent
           : theme.tileEmptyBackground;
 
-  const borderColor = status === "empty" ? theme.tileEmptyBorder : backgroundColor;
-  const textColor = status === "empty" ? theme.text : theme.onTile;
+  const borderColor =
+    status === "unverified" ? theme.tileEmptyBorder : backgroundColor;
+  const textColor = status === "unverified" ? theme.text : theme.onTile;
 
   return (
     <View style={[styles.tile, { backgroundColor, borderColor }]}>

@@ -1,16 +1,16 @@
-import { Radii, Spacing } from "@/theme";
+import { palette, Radii, Spacing } from "@/theme";
 import { Pressable, PressableProps, StyleSheet } from "react-native";
 
 interface ButtonProps extends PressableProps {
   children: React.ReactNode;
   type?: "default" | "outline";
-  backgroundColor: string;
+  backgroundColor?: string;
 }
 
 export default function Button({
   children,
   type,
-  backgroundColor,
+  backgroundColor = palette.black,
   style,
   ...props
 }: ButtonProps) {

@@ -1,4 +1,4 @@
-import { DomainError } from "@/DomainError";
+import { InvalidWordError } from "@/errors/InvalidWordError";
 
 export class PuzzleServices {
   constructor(private readonly targetWords: string[]) {}
@@ -14,12 +14,8 @@ export class PuzzleServices {
     if (command.seed) {
       const seed = command.seed.trim().toLowerCase();
 
-      if (seed.length !== 5) {
-        throw new DomainError("INVALID_SEED_LENGTH");
-      }
-      if (!this.targetWords.includes(seed)) {
-        throw new DomainError("INVALID_SEED");
-      }
+      this.validate({ guess: seed });
+
       return seed;
     }
 
@@ -32,12 +28,7 @@ export class PuzzleServices {
     const guess = command.guess.trim().toLowerCase();
     const target = command.target.trim().toLowerCase();
 
-    if (guess.length !== 5) {
-      throw new DomainError("INVALID_WORD_LENGTH");
-    }
-    if (!this.targetWords.includes(guess)) {
-      throw new DomainError("INVALID_WORD");
-    }
+    this.validate({ guess });
 
     const guessArray = guess.split("");
     const targetArray = target.split("");
@@ -76,5 +67,16 @@ export class PuzzleServices {
     });
 
     return result;
+  }
+
+  private validate(command: { guess: string }) {
+    const guess = command.guess.trim().toLowerCase();
+
+    if (guess.length !== 5) {
+      throw new InvalidWordError("TOO_SHORT");
+    }
+    if (!this.targetWords.includes(guess)) {
+      throw new InvalidWordError("NOT_IN_DICTIONARY");
+    }
   }
 }

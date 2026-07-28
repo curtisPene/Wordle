@@ -1,6 +1,7 @@
 import WordleIcon from "@/assets/wordle-icon.svg";
 import Button from "@/components/Button";
 import { useTypography } from "@/hooks/useTypography";
+import { useActiveGame } from "@/stores/useActiveGame";
 import { homeTheme, Spacing } from "@/theme";
 import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
@@ -28,6 +29,15 @@ export default function Index() {
           Get 6 guesses to guess a 5 letter word
         </Text>
       </View>
+      <Button
+        onPress={() => {
+          useActiveGame.getState().resetGame();
+        }}
+      >
+        <Text style={[typography.base, { color: homeTheme.onPrimary }]}>
+          Clear State
+        </Text>
+      </Button>
 
       <Button
         backgroundColor={homeTheme.black}
